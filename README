@@ -6,20 +6,16 @@ end
 
 class Property < AR::B
 	belongs_to :user
-	acts_as_exclusive
+	acts_as_exclusive :conditions => "users.id=?"
 end
 
 	***
 
 class PropertiesController < AC
 	def index
-		# not exclusive (bad)
-		# Property.find(:all)
-		
-		# manually exclusive (better)
-		Property.find(:all, :conditions => ["users.id = ?", @ user.id])
-		
-		# automatically exclusive (best)
-		Property.search(@user)
+		# finds all properties under owner - other's property is hidden
+		Property.search(:owner => @user.id)
 	end
+...
+
 end
