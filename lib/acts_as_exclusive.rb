@@ -6,35 +6,40 @@ module BearBrand
       # included is called from the ActiveRecord::Base when you inject this module
       def self.included(base)
         # Add acts_as_exclusive availability by extending the module that owns the function.
-        base.extend(ClassMethods)  
+        base.extend(ActsMethods)  
+      end
+      
+      module ActsMethods
+        def acts_as_exclusive(options = {})
+          class_inheritable_accessor :options
+          extend Exclusive::ClassMethods
+          
+          self.options = options
+        end
       end
       
       module ClassMethods
-        def acts_as_exclusive(options)
-          extend Exclusive::SingletonMethods
-          
-          @conditions_string=options[:conditions]
-          @joins=options[:joins]
-        end
-      end
-      
-      module SingletonMethods
         #exclusive search - wrapper around AR::B#find
         #Expects an owner key in options hash
-        def search(options)
-          owner = options[:owner]
-          conditions = [@conditions_string, owner.id] #array
-          extra_conditions = options[:conditions] #array
+        def search(local_options = {})
+          conditions = [options[:conditions], local_options[:owner].id] #array
+          dynamic_conditions = local_options[:conditions] #array
           
           #hackish weird way to add another AR condition
-          if extra_conditions and ! extra_conditions.empty?
-            conditions[0]+=" AND #{extra_conditions[0]}"
+          if dynamic_conditions and ! dynamic_conditions.empty?
+            conditions[0]+=" AND #{dynamic_conditions[0]}"
             #fails if more then 1 ec is provided
-            conditions.push(extra_conditions[1])
+            conditions.push(dynamic_conditions[1])
           end
           
-          find(:all, :joins => @joins, :conditions => conditions)
+          find(:all, :joins => options[:joins], :conditions => conditions)
         end
+        
+        # #override AR::B.find
+        # def find(*args)
+        #   sleep 3
+        #   super
+        # end
       end
     end
   end
