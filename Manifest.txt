@@ -1,0 +1,7 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/plugintest
+lib/plugintest.rb
+test/test_plugintest.rb
