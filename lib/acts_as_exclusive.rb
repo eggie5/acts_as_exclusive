@@ -19,19 +19,21 @@ module BearBrand
       end
       
       module ClassMethods
-        #exclusive search - wrapper around AR::B#find
-        #Expects an owner key in options hash
+        #Preforms AR::B:find, returning all records exclusive to owner
         def search(local_options = {})
+          #this is the main sql filter that limits results to a given owner
+          #example: ["content_providers.id = ?" 4]
           conditions = [options[:conditions], local_options[:owner].id] #array
-          dynamic_conditions = local_options[:conditions] #array
           
-          #hackish weird way to add another AR condition
+          #append run-time sql conditions
+          dynamic_conditions = local_options[:conditions] #array
           if dynamic_conditions and ! dynamic_conditions.empty?
             conditions[0]+=" AND #{dynamic_conditions[0]}"
             #fails if more then 1 ec is provided
             conditions.push(dynamic_conditions[1])
           end
           
+          #run find exclusive to owner
           find(:all, :joins => options[:joins], :conditions => conditions)
         end
         
