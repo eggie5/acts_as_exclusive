@@ -14,7 +14,7 @@ end
 class PropertiesController < AC
 	def index
 		# finds all properties under owner - other's property is hidden
-		Property.search(:owner => @user.id)
+		Property.find(:all_exclusive_to, :owner => @user.id)
 	end
 ...
 
