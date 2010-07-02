@@ -1,4 +1,4 @@
-Given a user model and a resource model. A single user has multiple resources. We need an easy method to get all resources that belong to a given user. Enter acts_as_exclusive. A given resource is exclusive to a given user and shouldn't be accessible from a different user. Acts_as_exclusive is meant to be used by a higher level method (controller) to facilitate the need for exclusiveness of certain resources to a certain owners.
+Given a user model and a resource model. A single user has multiple resources. We need an easy method to get all resources that belong to a given user. Enter acts_as_exclusive. A given resource is exclusive to a given user and shouldn't be accessible from a different user. Acts_as_exclusive is meant to be used by a higher level method (controller) to facilitate the need for exclusiveness of certain resources to a certain owners. test.
 
 class User < AR::B
 	has_many :properties
